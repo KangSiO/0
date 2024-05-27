@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR Marker Example</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/1.7.2/aframe/build/aframe-ar.js"></script>
+</head>
+<body style="margin: 0; overflow: hidden;">
+    <a-scene embedded arjs>
+        <!-- AR 마커 정의 -->
+        <a-marker type="pattern" url="p.png">
+            <!-- 3D 모델 -->
+            <a-entity gltf-model="n.glb" scale="0.1 0.1 0.1"></a-entity>
+        </a-marker>
+        <!-- 카메라 엔티티 -->
+        <a-entity camera></a-entity>
+    </a-scene>
+</body>
+</html>
