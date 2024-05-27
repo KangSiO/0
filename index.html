@@ -19,7 +19,8 @@
 <body>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/128/three.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/ar.js@2.0.12"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three/examples/js/loaders/GLTFLoader.js"></script> <!-- GLTFLoader 추가 -->
+    <script src="https://cdn.jsdelivr.net/npm/threex-ar.js@2.0.12/build/threex-ar.js"></script> <!-- AR.js 경로 수정 -->
 
     <script>
         // Scene 생성
@@ -32,8 +33,7 @@
         // WebGL Renderer 생성
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.xr.enabled = true; // WebXR을 사용하여 VR/AR을 활성화
-        document.body.appendChild(renderer.domElement);
+        document.body.appendChild(renderer.domElement); // WebXR 활성화와 관련된 부분 삭제
 
         // AR 마커 로더 생성
         const loader = new THREE.GLTFLoader();
@@ -88,11 +88,9 @@
                 arToolkitSource.domElement.style.top = '0px';
                 arToolkitSource.domElement.style.left = '0px';
                 document.body.appendChild(arToolkitSource.domElement);
-                arToolkitContext.arController.setPatternDetectionMode(THREE.ARController.DETECTION_MODE_COLOR);
-                animate();
+                animate(); // WebXR 활성화와 관련된 부분 삭제
             }, 2000);
         });
     </script>
 </body>
 </html>
-
