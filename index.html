@@ -3,19 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AR Marker Example</title>
+    <title>WebXR AR Example</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/1.7.2/aframe/build/aframe-ar.js"></script>
 </head>
-<body style="margin: 0; overflow: hidden;">
-    <a-scene embedded arjs>
-        <!-- AR 마커 정의 -->
-        <a-marker type="pattern" url="p.png">
-            <!-- 3D 모델 -->
-            <a-entity gltf-model="n.glb" scale="0.1 0.1 0.1"></a-entity>
-        </a-marker>
+<body>
+    <a-scene xr>
         <!-- 카메라 엔티티 -->
-        <a-entity camera></a-entity>
+        <a-entity camera position="0 1.6 0"></a-entity>
+
+        <!-- 3D 모델 -->
+        <a-entity gltf-model="url(n.glb)" scale="0.1 0.1 0.1"></a-entity>
     </a-scene>
+
+    <script>
+        navigator.xr.requestDevice().then((xrDevice) => {
+            xrDevice.requestSession({ immersive: true }).then((session) => {
+                document.querySelector('a-scene').setAttribute('xr', 'session', session);
+            });
+        });
+    </script>
 </body>
 </html>
