@@ -3,24 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebXR AR Example</title>
-    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <title>AR Marker Example</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+    </style>
 </head>
 <body>
-    <a-scene xr>
-        <!-- 카메라 엔티티 -->
-        <a-entity camera position="0 1.6 0"></a-entity>
-
-        <!-- 3D 모델 -->
-        <a-entity gltf-model="url(n.glb)" scale="0.1 0.1 0.1"></a-entity>
-    </a-scene>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/128/three.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ar.js@2.0.12"></script>
 
     <script>
-        navigator.xr.requestDevice().then((xrDevice) => {
-            xrDevice.requestSession({ immersive: true }).then((session) => {
-                document.querySelector('a-scene').setAttribute('xr', 'session', session);
-            });
+        // Scene 생성
+        const scene = new THREE.Scene();
+
+        // Camera 생성
+        const camera = new THREE.Camera();
+        scene.add(camera);
+
+        // WebGL Renderer 생성
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.xr.enabled = true; // WebXR을 사용하여 VR/AR을 활성화
+        document.body.appendChild(renderer.domElement);
+
+        // AR 마커 로더 생성
+        const loader = new THREE.GLTFLoader();
+
+        // AR 마커 이미지 로드
+        const markerURL = 'p.png';
+
+        // AR 마커 로드
+        const markerRoot = new THREE.Group();
+        scene.add(markerRoot);
+
+        // AR 마커 위에 3D 모델 표시
+        loader.load('n.glb', function (gltf) {
+            const model = gltf.scene;
+            model.scale.set(0.1, 0.1, 0.1); // 모델 크기 조절
+            markerRoot.add(model);
+        });
+
+        // AR.js 패턴 마커 인식 설정
+        const arToolkitSource = new THREEx.ArToolkitSource({
+            sourceType: 'webcam',
+        });
+
+        // 마커 트래커 생성
+        const arToolkitContext = new THREEx.ArToolkitContext({
+            cameraParametersUrl: 'data/camera_para.dat',
+            detectionMode: 'mono',
+        });
+
+        // 마커 트래커 초기화
+        arToolkitContext.init(() => {
+            camera.projectionMatrix.copy(arToolkitContext.getProjectionMatrix());
+        });
+
+        // AR 마커 인식 설정
+        const markerControls = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
+            type: 'pattern',
+            patternUrl: markerURL,
+        });
+
+        // 렌더링 함수
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+
+        // 렌더링 시작
+        arToolkitSource.init(() => {
+            setTimeout(() => {
+                document.body.style.display = 'block';
+                arToolkitSource.domElement.style.position = 'absolute';
+                arToolkitSource.domElement.style.top = '0px';
+                arToolkitSource.domElement.style.left = '0px';
+                document.body.appendChild(arToolkitSource.domElement);
+                arToolkitContext.arController.setPatternDetectionMode(THREE.ARController.DETECTION_MODE_COLOR);
+                animate();
+            }, 2000);
         });
     </script>
 </body>
 </html>
+
